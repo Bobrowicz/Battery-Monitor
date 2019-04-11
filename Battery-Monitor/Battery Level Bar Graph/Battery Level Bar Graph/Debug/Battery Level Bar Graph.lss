@@ -1,0 +1,190 @@
+
+Battery Level Bar Graph.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000086  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  000000da  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  000000da  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  0000010c  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000030  00000000  00000000  00000148  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   00000445  00000000  00000000  00000178  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 000003c5  00000000  00000000  000005bd  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   00000282  00000000  00000000  00000982  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000044  00000000  00000000  00000c04  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    000002ef  00000000  00000000  00000c48  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    00000024  00000000  00000000  00000f37  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_ranges 00000020  00000000  00000000  00000f5b  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	09 c0       	rjmp	.+18     	; 0x14 <__ctors_end>
+   2:	0e c0       	rjmp	.+28     	; 0x20 <__bad_interrupt>
+   4:	0d c0       	rjmp	.+26     	; 0x20 <__bad_interrupt>
+   6:	0c c0       	rjmp	.+24     	; 0x20 <__bad_interrupt>
+   8:	0b c0       	rjmp	.+22     	; 0x20 <__bad_interrupt>
+   a:	0a c0       	rjmp	.+20     	; 0x20 <__bad_interrupt>
+   c:	09 c0       	rjmp	.+18     	; 0x20 <__bad_interrupt>
+   e:	08 c0       	rjmp	.+16     	; 0x20 <__bad_interrupt>
+  10:	07 c0       	rjmp	.+14     	; 0x20 <__bad_interrupt>
+  12:	06 c0       	rjmp	.+12     	; 0x20 <__bad_interrupt>
+
+00000014 <__ctors_end>:
+  14:	11 24       	eor	r1, r1
+  16:	1f be       	out	0x3f, r1	; 63
+  18:	cf e9       	ldi	r28, 0x9F	; 159
+  1a:	cd bf       	out	0x3d, r28	; 61
+  1c:	0d d0       	rcall	.+26     	; 0x38 <main>
+  1e:	31 c0       	rjmp	.+98     	; 0x82 <_exit>
+
+00000020 <__bad_interrupt>:
+  20:	ef cf       	rjmp	.-34     	; 0x0 <__vectors>
+
+00000022 <ADC_init>:
+{
+	//ADMUX |= (1 << REFS0);	// Enabled: 1.1V internal voltage reference
+								// Disabled: Vcc as reference
+	//ADMUX |= (1 << ADLAR);	// Enabled: left adjusted result
+								// Disabled: right adjusted result
+	ADMUX |= /*0x00;*/			// ADC0 (PB5)
+  22:	39 9a       	sbi	0x07, 1	; 7
+			 /*0x01;*/			// ADC1 (PB2)
+			 0x02;		    	// ADC2 (PB4)
+			 /*0x03;*/		    // ADC3 (PB3)
+
+	ADCSRA |= (1 << ADEN);		// ADC Enable
+  24:	37 9a       	sbi	0x06, 7	; 6
+	//ADCSRA |= (1<< ADATE);	// ADC Auto Trigger Enable
+	//ADCSRA |= (1 << ADIF);	// ADC Interrupt Flag
+	//ADCSRA |= (1 << ADIE);	// ADC Interrupt Enable
+	ADCSRA |=   /*0x00;*/		// div 2
+  26:	32 9a       	sbi	0x06, 2	; 6
+				/*0x04;*/ 		// Timer/Counter Overflow
+				/*0x05;*/		// Timer/Counter Compare Match B
+				/*0x06;*/		// Pin Change Interrupt Request
+
+	//DIDR0 |= (1 << ADC0D);	// Disable Digital Input Buffer on ADC0
+	DIDR0 |= (1 << ADC2D);		// Disable Digital Input Buffer on ADC2
+  28:	a4 9a       	sbi	0x14, 4	; 20
+  2a:	08 95       	ret
+
+0000002c <read_voltage>:
+	//DIDR0 |= (1 << ADC1D);	// Disable Digital Input Buffer on ADC1
+}
+
+uint16_t read_voltage()
+{
+	ADCSRA |= (1 << ADSC);
+  2c:	36 9a       	sbi	0x06, 6	; 6
+	while(bit_is_set(ADCSRA, ADSC));
+  2e:	36 99       	sbic	0x06, 6	; 6
+  30:	fe cf       	rjmp	.-4      	; 0x2e <read_voltage+0x2>
+	return ADCW;
+  32:	84 b1       	in	r24, 0x04	; 4
+  34:	95 b1       	in	r25, 0x05	; 5
+}
+  36:	08 95       	ret
+
+00000038 <main>:
+
+int main(void)
+{
+	ADC_init();
+  38:	f4 df       	rcall	.-24     	; 0x22 <ADC_init>
+	DDRB = 0b00001111;	// SET PB0 - PB3 as output
+  3a:	8f e0       	ldi	r24, 0x0F	; 15
+  3c:	87 bb       	out	0x17, r24	; 23
+
+		
+		battery_voltage = read_voltage();
+		
+		if(battery_voltage <= 250){
+			PORTB = 0b00000001;
+  3e:	01 e0       	ldi	r16, 0x01	; 1
+		}
+		
+		if(battery_voltage > 250 && battery_voltage <= 500){
+			PORTB = 0b0000011;
+  40:	13 e0       	ldi	r17, 0x03	; 3
+		}	
+		if(battery_voltage > 500 && battery_voltage <= 750){
+			PORTB = 0b0000111;
+  42:	d7 e0       	ldi	r29, 0x07	; 7
+		}
+		if(battery_voltage > 750){
+			PORTB = 0b0001111;
+  44:	cf e0       	ldi	r28, 0x0F	; 15
+    while (1) 
+    {
+		
+
+		
+		battery_voltage = read_voltage();
+  46:	f2 df       	rcall	.-28     	; 0x2c <read_voltage>
+		
+		if(battery_voltage <= 250){
+  48:	8b 3f       	cpi	r24, 0xFB	; 251
+  4a:	91 05       	cpc	r25, r1
+  4c:	08 f4       	brcc	.+2      	; 0x50 <__SREG__+0x11>
+			PORTB = 0b00000001;
+  4e:	08 bb       	out	0x18, r16	; 24
+		}
+		
+		if(battery_voltage > 250 && battery_voltage <= 500){
+  50:	9c 01       	movw	r18, r24
+  52:	2b 5f       	subi	r18, 0xFB	; 251
+  54:	31 09       	sbc	r19, r1
+  56:	2a 3f       	cpi	r18, 0xFA	; 250
+  58:	31 05       	cpc	r19, r1
+  5a:	08 f4       	brcc	.+2      	; 0x5e <__SREG__+0x1f>
+			PORTB = 0b0000011;
+  5c:	18 bb       	out	0x18, r17	; 24
+		}	
+		if(battery_voltage > 500 && battery_voltage <= 750){
+  5e:	9c 01       	movw	r18, r24
+  60:	25 5f       	subi	r18, 0xF5	; 245
+  62:	31 40       	sbci	r19, 0x01	; 1
+  64:	2a 3f       	cpi	r18, 0xFA	; 250
+  66:	31 05       	cpc	r19, r1
+  68:	08 f4       	brcc	.+2      	; 0x6c <__SREG__+0x2d>
+			PORTB = 0b0000111;
+  6a:	d8 bb       	out	0x18, r29	; 24
+		}
+		if(battery_voltage > 750){
+  6c:	8f 3e       	cpi	r24, 0xEF	; 239
+  6e:	92 40       	sbci	r25, 0x02	; 2
+  70:	08 f0       	brcs	.+2      	; 0x74 <__SREG__+0x35>
+			PORTB = 0b0001111;
+  72:	c8 bb       	out	0x18, r28	; 24
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  74:	8f e2       	ldi	r24, 0x2F	; 47
+  76:	95 e7       	ldi	r25, 0x75	; 117
+  78:	01 97       	sbiw	r24, 0x01	; 1
+  7a:	f1 f7       	brne	.-4      	; 0x78 <__SREG__+0x39>
+  7c:	00 c0       	rjmp	.+0      	; 0x7e <__SREG__+0x3f>
+  7e:	00 00       	nop
+  80:	e2 cf       	rjmp	.-60     	; 0x46 <__SREG__+0x7>
+
+00000082 <_exit>:
+  82:	f8 94       	cli
+
+00000084 <__stop_program>:
+  84:	ff cf       	rjmp	.-2      	; 0x84 <__stop_program>
