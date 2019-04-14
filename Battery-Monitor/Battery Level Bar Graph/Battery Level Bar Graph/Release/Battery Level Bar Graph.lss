@@ -1,0 +1,293 @@
+
+Battery Level Bar Graph.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         000001e8  00000000  00000000  00000094  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         0000000a  00800060  000001e8  0000027c  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          00000002  0080006a  0080006a  00000286  2**0
+                  ALLOC
+  3 .comment      00000030  00000000  00000000  00000286  2**0
+                  CONTENTS, READONLY
+  4 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  000002b8  2**2
+                  CONTENTS, READONLY
+  5 .debug_info   000002dc  00000000  00000000  000002f4  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 000002b6  00000000  00000000  000005d0  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   000000ca  00000000  00000000  00000886  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_str    00000100  00000000  00000000  00000950  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	09 c0       	rjmp	.+18     	; 0x14 <__ctors_end>
+   2:	21 c0       	rjmp	.+66     	; 0x46 <__bad_interrupt>
+   4:	20 c0       	rjmp	.+64     	; 0x46 <__bad_interrupt>
+   6:	1f c0       	rjmp	.+62     	; 0x46 <__bad_interrupt>
+   8:	1e c0       	rjmp	.+60     	; 0x46 <__bad_interrupt>
+   a:	1d c0       	rjmp	.+58     	; 0x46 <__bad_interrupt>
+   c:	1c c0       	rjmp	.+56     	; 0x46 <__bad_interrupt>
+   e:	1b c0       	rjmp	.+54     	; 0x46 <__bad_interrupt>
+  10:	30 c0       	rjmp	.+96     	; 0x72 <__vector_8>
+  12:	19 c0       	rjmp	.+50     	; 0x46 <__bad_interrupt>
+
+00000014 <__ctors_end>:
+  14:	11 24       	eor	r1, r1
+  16:	1f be       	out	0x3f, r1	; 63
+  18:	cf e9       	ldi	r28, 0x9F	; 159
+  1a:	cd bf       	out	0x3d, r28	; 61
+
+0000001c <__do_copy_data>:
+  1c:	10 e0       	ldi	r17, 0x00	; 0
+  1e:	a0 e6       	ldi	r26, 0x60	; 96
+  20:	b0 e0       	ldi	r27, 0x00	; 0
+  22:	e8 ee       	ldi	r30, 0xE8	; 232
+  24:	f1 e0       	ldi	r31, 0x01	; 1
+  26:	02 c0       	rjmp	.+4      	; 0x2c <__do_copy_data+0x10>
+  28:	05 90       	lpm	r0, Z+
+  2a:	0d 92       	st	X+, r0
+  2c:	aa 36       	cpi	r26, 0x6A	; 106
+  2e:	b1 07       	cpc	r27, r17
+  30:	d9 f7       	brne	.-10     	; 0x28 <__do_copy_data+0xc>
+
+00000032 <__do_clear_bss>:
+  32:	20 e0       	ldi	r18, 0x00	; 0
+  34:	aa e6       	ldi	r26, 0x6A	; 106
+  36:	b0 e0       	ldi	r27, 0x00	; 0
+  38:	01 c0       	rjmp	.+2      	; 0x3c <.do_clear_bss_start>
+
+0000003a <.do_clear_bss_loop>:
+  3a:	1d 92       	st	X+, r1
+
+0000003c <.do_clear_bss_start>:
+  3c:	ac 36       	cpi	r26, 0x6C	; 108
+  3e:	b2 07       	cpc	r27, r18
+  40:	e1 f7       	brne	.-8      	; 0x3a <.do_clear_bss_loop>
+  42:	43 d0       	rcall	.+134    	; 0xca <main>
+  44:	cf c0       	rjmp	.+414    	; 0x1e4 <_exit>
+
+00000046 <__bad_interrupt>:
+  46:	dc cf       	rjmp	.-72     	; 0x0 <__vectors>
+
+00000048 <adc_init>:
+  48:	87 b1       	in	r24, 0x07	; 7
+  4a:	83 60       	ori	r24, 0x03	; 3
+  4c:	87 b9       	out	0x07, r24	; 7
+  4e:	37 9a       	sbi	0x06, 7	; 6
+  50:	32 9a       	sbi	0x06, 2	; 6
+  52:	a4 9a       	sbi	0x14, 4	; 20
+  54:	08 95       	ret
+
+00000056 <adc_read_single>:
+  56:	36 9a       	sbi	0x06, 6	; 6
+  58:	36 99       	sbic	0x06, 6	; 6
+  5a:	fe cf       	rjmp	.-4      	; 0x58 <adc_read_single+0x2>
+  5c:	84 b1       	in	r24, 0x04	; 4
+  5e:	95 b1       	in	r25, 0x05	; 5
+  60:	08 95       	ret
+
+00000062 <adc_select_channel>:
+  62:	97 b1       	in	r25, 0x07	; 7
+  64:	9c 7f       	andi	r25, 0xFC	; 252
+  66:	97 b9       	out	0x07, r25	; 7
+  68:	97 b1       	in	r25, 0x07	; 7
+  6a:	83 70       	andi	r24, 0x03	; 3
+  6c:	98 2b       	or	r25, r24
+  6e:	97 b9       	out	0x07, r25	; 7
+  70:	08 95       	ret
+
+00000072 <__vector_8>:
+  72:	18 95       	reti
+
+00000074 <select_led_mode>:
+  74:	83 e0       	ldi	r24, 0x03	; 3
+  76:	f5 df       	rcall	.-22     	; 0x62 <adc_select_channel>
+  78:	ee df       	rcall	.-36     	; 0x56 <adc_read_single>
+  7a:	44 97       	sbiw	r24, 0x14	; 20
+  7c:	38 f0       	brcs	.+14     	; 0x8c <select_led_mode+0x18>
+  7e:	80 e6       	ldi	r24, 0x60	; 96
+  80:	90 e0       	ldi	r25, 0x00	; 0
+  82:	90 93 6b 00 	sts	0x006B, r25	; 0x80006b <__data_end+0x1>
+  86:	80 93 6a 00 	sts	0x006A, r24	; 0x80006a <__data_end>
+  8a:	08 95       	ret
+  8c:	85 e6       	ldi	r24, 0x65	; 101
+  8e:	90 e0       	ldi	r25, 0x00	; 0
+  90:	90 93 6b 00 	sts	0x006B, r25	; 0x80006b <__data_end+0x1>
+  94:	80 93 6a 00 	sts	0x006A, r24	; 0x80006a <__data_end>
+  98:	08 95       	ret
+
+0000009a <update_led_bar_graph>:
+  9a:	98 b3       	in	r25, 0x18	; 24
+  9c:	88 23       	and	r24, r24
+  9e:	69 f0       	breq	.+26     	; 0xba <__stack+0x1b>
+  a0:	90 7f       	andi	r25, 0xF0	; 240
+  a2:	98 bb       	out	0x18, r25	; 24
+  a4:	98 b3       	in	r25, 0x18	; 24
+  a6:	e0 91 6a 00 	lds	r30, 0x006A	; 0x80006a <__data_end>
+  aa:	f0 91 6b 00 	lds	r31, 0x006B	; 0x80006b <__data_end+0x1>
+  ae:	e8 0f       	add	r30, r24
+  b0:	f1 1d       	adc	r31, r1
+  b2:	80 81       	ld	r24, Z
+  b4:	89 2b       	or	r24, r25
+  b6:	88 bb       	out	0x18, r24	; 24
+  b8:	08 95       	ret
+  ba:	e0 91 6a 00 	lds	r30, 0x006A	; 0x80006a <__data_end>
+  be:	f0 91 6b 00 	lds	r31, 0x006B	; 0x80006b <__data_end+0x1>
+  c2:	80 81       	ld	r24, Z
+  c4:	89 27       	eor	r24, r25
+  c6:	88 bb       	out	0x18, r24	; 24
+  c8:	08 95       	ret
+
+000000ca <main>:
+  ca:	81 b5       	in	r24, 0x21	; 33
+  cc:	80 64       	ori	r24, 0x40	; 64
+  ce:	81 bd       	out	0x21, r24	; 33
+  d0:	81 b5       	in	r24, 0x21	; 33
+  d2:	80 61       	ori	r24, 0x10	; 16
+  d4:	81 bd       	out	0x21, r24	; 33
+  d6:	81 b5       	in	r24, 0x21	; 33
+  d8:	83 60       	ori	r24, 0x03	; 3
+  da:	81 bd       	out	0x21, r24	; 33
+  dc:	b5 df       	rcall	.-150    	; 0x48 <adc_init>
+  de:	ca df       	rcall	.-108    	; 0x74 <select_led_mode>
+  e0:	82 e0       	ldi	r24, 0x02	; 2
+  e2:	bf df       	rcall	.-130    	; 0x62 <adc_select_channel>
+  e4:	87 b3       	in	r24, 0x17	; 23
+  e6:	8f 60       	ori	r24, 0x0F	; 15
+  e8:	87 bb       	out	0x17, r24	; 23
+  ea:	14 e0       	ldi	r17, 0x04	; 4
+  ec:	b4 df       	rcall	.-152    	; 0x56 <adc_read_single>
+  ee:	ec 01       	movw	r28, r24
+  f0:	81 2f       	mov	r24, r17
+  f2:	d3 df       	rcall	.-90     	; 0x9a <update_led_bar_graph>
+  f4:	12 30       	cpi	r17, 0x02	; 2
+  f6:	09 f4       	brne	.+2      	; 0xfa <main+0x30>
+  f8:	41 c0       	rjmp	.+130    	; 0x17c <main+0xb2>
+  fa:	08 f4       	brcc	.+2      	; 0xfe <main+0x34>
+  fc:	6b c0       	rjmp	.+214    	; 0x1d4 <main+0x10a>
+  fe:	13 30       	cpi	r17, 0x03	; 3
+ 100:	31 f1       	breq	.+76     	; 0x14e <main+0x84>
+ 102:	14 30       	cpi	r17, 0x04	; 4
+ 104:	89 f0       	breq	.+34     	; 0x128 <main+0x5e>
+ 106:	68 c0       	rjmp	.+208    	; 0x1d8 <main+0x10e>
+ 108:	85 b7       	in	r24, 0x35	; 53
+ 10a:	87 7e       	andi	r24, 0xE7	; 231
+ 10c:	85 bf       	out	0x35, r24	; 53
+ 10e:	85 b7       	in	r24, 0x35	; 53
+ 110:	80 62       	ori	r24, 0x20	; 32
+ 112:	85 bf       	out	0x35, r24	; 53
+ 114:	78 94       	sei
+ 116:	88 95       	sleep
+ 118:	85 b7       	in	r24, 0x35	; 53
+ 11a:	8f 7d       	andi	r24, 0xDF	; 223
+ 11c:	85 bf       	out	0x35, r24	; 53
+ 11e:	f8 94       	cli
+ 120:	9a df       	rcall	.-204    	; 0x56 <adc_read_single>
+ 122:	ec 01       	movw	r28, r24
+ 124:	84 e0       	ldi	r24, 0x04	; 4
+ 126:	b9 df       	rcall	.-142    	; 0x9a <update_led_bar_graph>
+ 128:	c1 30       	cpi	r28, 0x01	; 1
+ 12a:	d3 40       	sbci	r29, 0x03	; 3
+ 12c:	68 f7       	brcc	.-38     	; 0x108 <main+0x3e>
+ 12e:	85 b7       	in	r24, 0x35	; 53
+ 130:	87 7e       	andi	r24, 0xE7	; 231
+ 132:	85 bf       	out	0x35, r24	; 53
+ 134:	85 b7       	in	r24, 0x35	; 53
+ 136:	80 62       	ori	r24, 0x20	; 32
+ 138:	85 bf       	out	0x35, r24	; 53
+ 13a:	78 94       	sei
+ 13c:	88 95       	sleep
+ 13e:	85 b7       	in	r24, 0x35	; 53
+ 140:	8f 7d       	andi	r24, 0xDF	; 223
+ 142:	85 bf       	out	0x35, r24	; 53
+ 144:	f8 94       	cli
+ 146:	87 df       	rcall	.-242    	; 0x56 <adc_read_single>
+ 148:	ec 01       	movw	r28, r24
+ 14a:	83 e0       	ldi	r24, 0x03	; 3
+ 14c:	a6 df       	rcall	.-180    	; 0x9a <update_led_bar_graph>
+ 14e:	c2 30       	cpi	r28, 0x02	; 2
+ 150:	83 e0       	ldi	r24, 0x03	; 3
+ 152:	d8 07       	cpc	r29, r24
+ 154:	c8 f6       	brcc	.-78     	; 0x108 <main+0x3e>
+ 156:	c2 3e       	cpi	r28, 0xE2	; 226
+ 158:	d2 40       	sbci	r29, 0x02	; 2
+ 15a:	48 f7       	brcc	.-46     	; 0x12e <main+0x64>
+ 15c:	85 b7       	in	r24, 0x35	; 53
+ 15e:	87 7e       	andi	r24, 0xE7	; 231
+ 160:	85 bf       	out	0x35, r24	; 53
+ 162:	85 b7       	in	r24, 0x35	; 53
+ 164:	80 62       	ori	r24, 0x20	; 32
+ 166:	85 bf       	out	0x35, r24	; 53
+ 168:	78 94       	sei
+ 16a:	88 95       	sleep
+ 16c:	85 b7       	in	r24, 0x35	; 53
+ 16e:	8f 7d       	andi	r24, 0xDF	; 223
+ 170:	85 bf       	out	0x35, r24	; 53
+ 172:	f8 94       	cli
+ 174:	70 df       	rcall	.-288    	; 0x56 <adc_read_single>
+ 176:	ec 01       	movw	r28, r24
+ 178:	82 e0       	ldi	r24, 0x02	; 2
+ 17a:	8f df       	rcall	.-226    	; 0x9a <update_led_bar_graph>
+ 17c:	c3 3e       	cpi	r28, 0xE3	; 227
+ 17e:	82 e0       	ldi	r24, 0x02	; 2
+ 180:	d8 07       	cpc	r29, r24
+ 182:	a8 f6       	brcc	.-86     	; 0x12e <main+0x64>
+ 184:	c3 3c       	cpi	r28, 0xC3	; 195
+ 186:	d2 40       	sbci	r29, 0x02	; 2
+ 188:	48 f7       	brcc	.-46     	; 0x15c <main+0x92>
+ 18a:	85 b7       	in	r24, 0x35	; 53
+ 18c:	87 7e       	andi	r24, 0xE7	; 231
+ 18e:	85 bf       	out	0x35, r24	; 53
+ 190:	85 b7       	in	r24, 0x35	; 53
+ 192:	80 62       	ori	r24, 0x20	; 32
+ 194:	85 bf       	out	0x35, r24	; 53
+ 196:	78 94       	sei
+ 198:	88 95       	sleep
+ 19a:	85 b7       	in	r24, 0x35	; 53
+ 19c:	8f 7d       	andi	r24, 0xDF	; 223
+ 19e:	85 bf       	out	0x35, r24	; 53
+ 1a0:	f8 94       	cli
+ 1a2:	59 df       	rcall	.-334    	; 0x56 <adc_read_single>
+ 1a4:	ec 01       	movw	r28, r24
+ 1a6:	81 e0       	ldi	r24, 0x01	; 1
+ 1a8:	78 df       	rcall	.-272    	; 0x9a <update_led_bar_graph>
+ 1aa:	c4 3c       	cpi	r28, 0xC4	; 196
+ 1ac:	82 e0       	ldi	r24, 0x02	; 2
+ 1ae:	d8 07       	cpc	r29, r24
+ 1b0:	a8 f6       	brcc	.-86     	; 0x15c <main+0x92>
+ 1b2:	11 e0       	ldi	r17, 0x01	; 1
+ 1b4:	c4 3a       	cpi	r28, 0xA4	; 164
+ 1b6:	d2 40       	sbci	r29, 0x02	; 2
+ 1b8:	98 f0       	brcs	.+38     	; 0x1e0 <main+0x116>
+ 1ba:	85 b7       	in	r24, 0x35	; 53
+ 1bc:	87 7e       	andi	r24, 0xE7	; 231
+ 1be:	85 bf       	out	0x35, r24	; 53
+ 1c0:	85 b7       	in	r24, 0x35	; 53
+ 1c2:	80 62       	ori	r24, 0x20	; 32
+ 1c4:	85 bf       	out	0x35, r24	; 53
+ 1c6:	78 94       	sei
+ 1c8:	88 95       	sleep
+ 1ca:	85 b7       	in	r24, 0x35	; 53
+ 1cc:	8f 7d       	andi	r24, 0xDF	; 223
+ 1ce:	85 bf       	out	0x35, r24	; 53
+ 1d0:	f8 94       	cli
+ 1d2:	8c cf       	rjmp	.-232    	; 0xec <main+0x22>
+ 1d4:	11 30       	cpi	r17, 0x01	; 1
+ 1d6:	49 f3       	breq	.-46     	; 0x1aa <main+0xe0>
+ 1d8:	11 e0       	ldi	r17, 0x01	; 1
+ 1da:	c5 3a       	cpi	r28, 0xA5	; 165
+ 1dc:	d2 40       	sbci	r29, 0x02	; 2
+ 1de:	68 f7       	brcc	.-38     	; 0x1ba <main+0xf0>
+ 1e0:	10 e0       	ldi	r17, 0x00	; 0
+ 1e2:	eb cf       	rjmp	.-42     	; 0x1ba <main+0xf0>
+
+000001e4 <_exit>:
+ 1e4:	f8 94       	cli
+
+000001e6 <__stop_program>:
+ 1e6:	ff cf       	rjmp	.-2      	; 0x1e6 <__stop_program>

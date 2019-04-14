@@ -8,97 +8,166 @@
 #define F_CPU 1200000UL
 #include <avr/io.h>
 #include <util/delay.h>
+#include <avr/sleep.h>
+#include <avr/interrupt.h>
 #include <avr/sfr_defs.h>
+#include <adc.h>
 
-/* Initialize ADC */
-void ADC_init()
-{	/* Voltage reference selection */
-	//ADMUX |= (1 << REFS0);	// Enabled: 1.1V internal voltage reference
-								// Disabled: Vcc as reference
+#define ADC_CH_LED_MODE 0x03	// ADC3
+#define ADC_CH_BATT_V	0x02	// ADC2
 
-	/* Presentation of the ADC results in ADC Data Register */
-	//ADMUX |= (1 << ADLAR);	// Enabled: left adjusted result
-								// Disabled: right adjusted result
+/* States represent battery voltage levels */
+#define EMPTY	0
+#define LOW		1
+#define MED		2
+#define HIGH	3
+#define FULL	4
 
-	/* Input channel selection */
-	ADMUX |= /*0x00;*/			// ADC0 (PB5)
-			 /*0x01;*/			// ADC1 (PB2)
-			 0x02;		    	// ADC2 (PB4)
-			 /*0x03;*/		    // ADC3 (PB3)
+/* Actual battery pack voltage is double */
+#define THRESHOLD_LOW	676		// 3.30 V
+#define THRESHOLD_MED	707		// 3.45 V
+#define THRESHOLD_HIGH	738		// 3.60 V
+#define THRESHOLD_FULL	769		// 3.75 V
 
-	/* ADC Enable */
-	ADCSRA |= (1 << ADEN);		
+#define LED_MASK	0x0F
 
-	/* ADC Auto Trigger Enable */
-	//ADCSRA |= (1<< ADATE);	
+/* Function Prototypes */
+void select_led_mode(void);
+void update_led_bar_graph(uint8_t level);
+void sleep(void);
 
-	/* ADC Interrupt Enable */
-	//ADCSRA |= (1 << ADIE);
+/* Global Variables */
+/* In Dot mode only single LED is lit representing battery charge level */
+uint8_t dot_mode[5] = {0x01, 0x01, 0x02, 0x04, 0x08};
+/* In Bar mode LEDs up to current battery level are lit */
+uint8_t bar_mode[5] = {0x01, 0x01, 0x03, 0x07, 0x0F};
+uint8_t *led_mode;
 
-	/* ADC prescaler selections */
-	ADCSRA |=   /*0x00;*/		// div 2
-				/*0x01;*/		// div 2
-				/*0x02;*/		// div 4
-				/*0x03;*/		// div 8
-				  0x04; 		// div 16
-				/*0x05;*/		// div 32
-				/*0x06;*/		// div 64
-				/*0x07;*/		// div 128
-	
-	/* ADC auto trigger sources */
-	//ADCSRB |=	/*0x00;*/		// Free Running Mode
-				/*0x01;*/		// Analog Comparator
-				/*0x02;*/		// External Interrupt Request 0
-				/*0x03;*/		// Timer/Counter Compare Match A
-				/*0x04;*/ 		// Timer/Counter Overflow
-				/*0x05;*/		// Timer/Counter Compare Match B
-				/*0x06;*/		// Pin Change Interrupt Request
 
-	/* Digital input disable */
-	//DIDR0 |= (1 << ADC0D);	// Disable Digital Input Buffer on ADC0
-	DIDR0 |= (1 << ADC2D);		// Disable Digital Input Buffer on ADC2
-	//DIDR0 |= (1 << ADC3D);	// Disable Digital Input Buffer on ADC3
-	//DIDR0 |= (1 << ADC1D);	// Disable Digital Input Buffer on ADC1
-}
-
-/* Perform single conversion and return result */
-uint16_t adc_read_single()
-{
-	ADCSRA |= (1 << ADSC);
-	while(bit_is_set(ADCSRA, ADSC));
-	return ADCW;
+/* Initialize watchdog timer. */
+void wdt_init(void) {
+	WDTCR |= (1 << WDTIE);      // watchdog timer interrupt enable
+	WDTCR |= (1 << WDCE);       // start timed sequence
+	//WDTCR |= (1 << WDP2);     // 0.25 sec timeout
+	WDTCR |= (1 << WDP1) | (1 << WDP0); // 0.125 sec timeout
 }
 
 int main(void)
 {
-	ADC_init();
-	DDRB = 0b00001111;	// SET PB0 - PB3 as output
+	wdt_init();
+	adc_init();
+	
+	/* LEDs in Dot or Bar mode */
+	select_led_mode();
+	
+	/* Sample battery voltage */
+	adc_select_channel(ADC_CH_BATT_V);
+
+	/* Output LEDs connected to PB0 - PB3 */
+	DDRB |= LED_MASK;
 	
 	uint16_t battery_voltage = 0;
+
+	/* Assume initial state */
+	uint8_t state = FULL;
 	
-    /* Replace with your application code */
     while (1) 
     {
-		
-
-		
 		battery_voltage = adc_read_single();
+		update_led_bar_graph(state);
 		
-		if(battery_voltage <= 250){
-			PORTB = 0b00000001;
-		}
-		
-		if(battery_voltage > 250 && battery_voltage <= 500){
-			PORTB = 0b0000011;
-		}	
-		if(battery_voltage > 500 && battery_voltage <= 750){
-			PORTB = 0b0000111;
-		}
-		if(battery_voltage > 750){
-			PORTB = 0b0001111;
+		switch(state)
+		{
+			case EMPTY:
+				if (battery_voltage > THRESHOLD_LOW) {
+					state = LOW;
+				}
+				break;
+
+			case LOW:
+				if (battery_voltage > THRESHOLD_MED) {
+					state = MED;
+				}
+				if (battery_voltage < THRESHOLD_LOW) {
+					state = EMPTY;
+				}
+				break;
+
+			case MED:
+				if (battery_voltage > THRESHOLD_HIGH) {
+					state = HIGH;
+				}
+				if (battery_voltage < THRESHOLD_MED) {
+					state = LOW;
+				}
+				break;
+
+			case HIGH:
+				if (battery_voltage > THRESHOLD_FULL) {
+					state = FULL;
+				}
+				if (battery_voltage < THRESHOLD_HIGH) {
+					state = MED;
+				}
+				break;
+
+			case FULL:
+				if (battery_voltage < THRESHOLD_FULL) {
+					state = HIGH;
+				}
+				break;
+
+			default:
+				break;
 		}
 
-		_delay_ms(100);
+		sleep();    // power down uC
     }
 }
 
+/* Interrupt wakes uC from sleep */
+EMPTY_INTERRUPT(WDT_vect);
+
+/* Pull-down resistor is attached to the i/o pin through solder bridge. *
+ * Pin is checked after MCU Reset to determine LED output mode.			*
+ * If pin is pulled to ground then Dot mode is selected. Otherwise, Bar	*
+ * mode is selected. Because output LED is also attached to this pin,	*
+ * digital logic level can't be used to determine pin state.			*
+ * ADC is used instead.													*/
+void select_led_mode(void)
+{
+	adc_select_channel(ADC_CH_LED_MODE);
+	// 0.1 volt is the the threshold
+	if(adc_read_single() < 20) {
+		led_mode = dot_mode;
+	}
+	else {
+		led_mode = bar_mode;
+	}
+}
+
+/* Output LEDs are updated each time this function runs.				*
+ * At minimum level bottom LED is toggled on and Off.					*
+ * At higher levels LEDs are lit depending on selected mode.			*/
+void update_led_bar_graph(uint8_t level)
+{
+	if (level == 0) {
+		// Toggle bottom LED
+		PORTB ^= led_mode[level];
+	}
+	else {
+		// Clear bottom 4 bits and update
+		PORTB &= ~LED_MASK;
+		PORTB |= led_mode[level];
+	}
+}
+
+/* Put uC into sleep mode. */
+void sleep(void) {
+	set_sleep_mode(SLEEP_MODE_IDLE);
+	sleep_enable();
+	sei();
+	sleep_cpu();
+	sleep_disable();
+	cli();
+}

@@ -3,188 +3,441 @@ Battery Level Bar Graph.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         00000086  00000000  00000000  00000054  2**1
+  0 .text         0000019e  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .data         00000000  00800060  00800060  000000da  2**0
+  1 .data         0000000a  00800060  0000019e  00000232  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  2 .comment      00000030  00000000  00000000  000000da  2**0
+  2 .bss          00000002  0080006a  0080006a  0000023c  2**0
+                  ALLOC
+  3 .comment      00000030  00000000  00000000  0000023c  2**0
                   CONTENTS, READONLY
-  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  0000010c  2**2
+  4 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  0000026c  2**2
                   CONTENTS, READONLY
-  4 .debug_aranges 00000030  00000000  00000000  00000148  2**0
+  5 .debug_aranges 00000088  00000000  00000000  000002a8  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   00000445  00000000  00000000  00000178  2**0
+  6 .debug_info   000005fd  00000000  00000000  00000330  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 000003c5  00000000  00000000  000005bd  2**0
+  7 .debug_abbrev 00000452  00000000  00000000  0000092d  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00000282  00000000  00000000  00000982  2**0
+  8 .debug_line   00000455  00000000  00000000  00000d7f  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  00000044  00000000  00000000  00000c04  2**2
+  9 .debug_frame  000000d8  00000000  00000000  000011d4  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    000002ef  00000000  00000000  00000c48  2**0
+ 10 .debug_str    00000341  00000000  00000000  000012ac  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    00000024  00000000  00000000  00000f37  2**0
+ 11 .debug_loc    000000d6  00000000  00000000  000015ed  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 00000020  00000000  00000000  00000f5b  2**0
+ 12 .debug_ranges 00000068  00000000  00000000  000016c3  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
 
 00000000 <__vectors>:
    0:	09 c0       	rjmp	.+18     	; 0x14 <__ctors_end>
-   2:	0e c0       	rjmp	.+28     	; 0x20 <__bad_interrupt>
-   4:	0d c0       	rjmp	.+26     	; 0x20 <__bad_interrupt>
-   6:	0c c0       	rjmp	.+24     	; 0x20 <__bad_interrupt>
-   8:	0b c0       	rjmp	.+22     	; 0x20 <__bad_interrupt>
-   a:	0a c0       	rjmp	.+20     	; 0x20 <__bad_interrupt>
-   c:	09 c0       	rjmp	.+18     	; 0x20 <__bad_interrupt>
-   e:	08 c0       	rjmp	.+16     	; 0x20 <__bad_interrupt>
-  10:	07 c0       	rjmp	.+14     	; 0x20 <__bad_interrupt>
-  12:	06 c0       	rjmp	.+12     	; 0x20 <__bad_interrupt>
+   2:	21 c0       	rjmp	.+66     	; 0x46 <__bad_interrupt>
+   4:	20 c0       	rjmp	.+64     	; 0x46 <__bad_interrupt>
+   6:	1f c0       	rjmp	.+62     	; 0x46 <__bad_interrupt>
+   8:	1e c0       	rjmp	.+60     	; 0x46 <__bad_interrupt>
+   a:	1d c0       	rjmp	.+58     	; 0x46 <__bad_interrupt>
+   c:	1c c0       	rjmp	.+56     	; 0x46 <__bad_interrupt>
+   e:	1b c0       	rjmp	.+54     	; 0x46 <__bad_interrupt>
+  10:	3a c0       	rjmp	.+116    	; 0x86 <__vector_8>
+  12:	19 c0       	rjmp	.+50     	; 0x46 <__bad_interrupt>
 
 00000014 <__ctors_end>:
   14:	11 24       	eor	r1, r1
   16:	1f be       	out	0x3f, r1	; 63
   18:	cf e9       	ldi	r28, 0x9F	; 159
   1a:	cd bf       	out	0x3d, r28	; 61
-  1c:	0d d0       	rcall	.+26     	; 0x38 <main>
-  1e:	31 c0       	rjmp	.+98     	; 0x82 <_exit>
 
-00000020 <__bad_interrupt>:
-  20:	ef cf       	rjmp	.-34     	; 0x0 <__vectors>
+0000001c <__do_copy_data>:
+  1c:	10 e0       	ldi	r17, 0x00	; 0
+  1e:	a0 e6       	ldi	r26, 0x60	; 96
+  20:	b0 e0       	ldi	r27, 0x00	; 0
+  22:	ee e9       	ldi	r30, 0x9E	; 158
+  24:	f1 e0       	ldi	r31, 0x01	; 1
+  26:	02 c0       	rjmp	.+4      	; 0x2c <__do_copy_data+0x10>
+  28:	05 90       	lpm	r0, Z+
+  2a:	0d 92       	st	X+, r0
+  2c:	aa 36       	cpi	r26, 0x6A	; 106
+  2e:	b1 07       	cpc	r27, r17
+  30:	d9 f7       	brne	.-10     	; 0x28 <__do_copy_data+0xc>
 
-00000022 <ADC_init>:
-{
-	//ADMUX |= (1 << REFS0);	// Enabled: 1.1V internal voltage reference
-								// Disabled: Vcc as reference
-	//ADMUX |= (1 << ADLAR);	// Enabled: left adjusted result
-								// Disabled: right adjusted result
-	ADMUX |= /*0x00;*/			// ADC0 (PB5)
-  22:	39 9a       	sbi	0x07, 1	; 7
-			 /*0x01;*/			// ADC1 (PB2)
-			 0x02;		    	// ADC2 (PB4)
-			 /*0x03;*/		    // ADC3 (PB3)
+00000032 <__do_clear_bss>:
+  32:	20 e0       	ldi	r18, 0x00	; 0
+  34:	aa e6       	ldi	r26, 0x6A	; 106
+  36:	b0 e0       	ldi	r27, 0x00	; 0
+  38:	01 c0       	rjmp	.+2      	; 0x3c <.do_clear_bss_start>
 
-	ADCSRA |= (1 << ADEN);		// ADC Enable
-  24:	37 9a       	sbi	0x06, 7	; 6
-	//ADCSRA |= (1<< ADATE);	// ADC Auto Trigger Enable
-	//ADCSRA |= (1 << ADIF);	// ADC Interrupt Flag
-	//ADCSRA |= (1 << ADIE);	// ADC Interrupt Enable
-	ADCSRA |=   /*0x00;*/		// div 2
-  26:	32 9a       	sbi	0x06, 2	; 6
-				/*0x04;*/ 		// Timer/Counter Overflow
-				/*0x05;*/		// Timer/Counter Compare Match B
-				/*0x06;*/		// Pin Change Interrupt Request
+0000003a <.do_clear_bss_loop>:
+  3a:	1d 92       	st	X+, r1
 
-	//DIDR0 |= (1 << ADC0D);	// Disable Digital Input Buffer on ADC0
-	DIDR0 |= (1 << ADC2D);		// Disable Digital Input Buffer on ADC2
-  28:	a4 9a       	sbi	0x14, 4	; 20
-  2a:	08 95       	ret
+0000003c <.do_clear_bss_start>:
+  3c:	ac 36       	cpi	r26, 0x6C	; 108
+  3e:	b2 07       	cpc	r27, r18
+  40:	e1 f7       	brne	.-8      	; 0x3a <.do_clear_bss_loop>
+  42:	5b d0       	rcall	.+182    	; 0xfa <main>
+  44:	aa c0       	rjmp	.+340    	; 0x19a <_exit>
 
-0000002c <read_voltage>:
-	//DIDR0 |= (1 << ADC1D);	// Disable Digital Input Buffer on ADC1
+00000046 <__bad_interrupt>:
+  46:	dc cf       	rjmp	.-72     	; 0x0 <__vectors>
+
+00000048 <adc_init>:
+	ADCSRA &= ~(1 << ADEN);
+ }
+
+ void adc_enable()
+ {
+	ADCSRA |= (1 << ADEN);
+  48:	87 b1       	in	r24, 0x07	; 7
+  4a:	83 60       	ori	r24, 0x03	; 3
+  4c:	87 b9       	out	0x07, r24	; 7
+  4e:	37 9a       	sbi	0x06, 7	; 6
+  50:	32 9a       	sbi	0x06, 2	; 6
+  52:	a4 9a       	sbi	0x14, 4	; 20
+  54:	08 95       	ret
+
+00000056 <adc_read_single>:
+ }
+
+ /* Perform single conversion and return result */
+ uint16_t adc_read_single()
+ {
+	 ADCSRA |= (1 << ADSC);
+  56:	36 9a       	sbi	0x06, 6	; 6
+	 while(bit_is_set(ADCSRA, ADSC));
+  58:	36 99       	sbic	0x06, 6	; 6
+  5a:	fe cf       	rjmp	.-4      	; 0x58 <adc_read_single+0x2>
+	 return ADCW;
+  5c:	84 b1       	in	r24, 0x04	; 4
+  5e:	95 b1       	in	r25, 0x05	; 5
+ }
+  60:	08 95       	ret
+
+00000062 <adc_select_channel>:
+
+ void adc_select_channel(uint8_t channel)
+ {
+	ADMUX &= 0b11111100;
+  62:	97 b1       	in	r25, 0x07	; 7
+  64:	9c 7f       	andi	r25, 0xFC	; 252
+  66:	97 b9       	out	0x07, r25	; 7
+	ADMUX |= (0b00000011 & channel);
+  68:	97 b1       	in	r25, 0x07	; 7
+  6a:	83 70       	andi	r24, 0x03	; 3
+  6c:	98 2b       	or	r25, r24
+  6e:	97 b9       	out	0x07, r25	; 7
+  70:	08 95       	ret
+
+00000072 <wdt_init>:
+uint8_t *led_mode;
+
+
+/* Initialize watchdog timer. */
+void wdt_init(void) {
+	WDTCR |= (1 << WDTIE);      // watchdog timer interrupt enable
+  72:	81 b5       	in	r24, 0x21	; 33
+  74:	80 64       	ori	r24, 0x40	; 64
+  76:	81 bd       	out	0x21, r24	; 33
+	WDTCR |= (1 << WDCE);       // start timed sequence
+  78:	81 b5       	in	r24, 0x21	; 33
+  7a:	80 61       	ori	r24, 0x10	; 16
+  7c:	81 bd       	out	0x21, r24	; 33
+	//WDTCR |= (1 << WDP2);     // 0.25 sec timeout
+	WDTCR |= (1 << WDP1) | (1 << WDP0); // 0.125 sec timeout
+  7e:	81 b5       	in	r24, 0x21	; 33
+  80:	83 60       	ori	r24, 0x03	; 3
+  82:	81 bd       	out	0x21, r24	; 33
+  84:	08 95       	ret
+
+00000086 <__vector_8>:
+		sleep();    // power down uC
+    }
 }
 
-uint16_t read_voltage()
-{
-	ADCSRA |= (1 << ADSC);
-  2c:	36 9a       	sbi	0x06, 6	; 6
-	while(bit_is_set(ADCSRA, ADSC));
-  2e:	36 99       	sbic	0x06, 6	; 6
-  30:	fe cf       	rjmp	.-4      	; 0x2e <read_voltage+0x2>
-	return ADCW;
-  32:	84 b1       	in	r24, 0x04	; 4
-  34:	95 b1       	in	r25, 0x05	; 5
-}
-  36:	08 95       	ret
+/* Interrupt wakes uC from sleep */
+EMPTY_INTERRUPT(WDT_vect);
+  86:	18 95       	reti
 
-00000038 <main>:
+00000088 <select_led_mode>:
+ * mode is selected. Because output LED is also attached to this pin,	*
+ * digital logic level can't be used to determine pin state.			*
+ * ADC is used instead.													*/
+void select_led_mode(void)
+{
+	adc_select_channel(ADC_CH_LED_MODE);
+  88:	83 e0       	ldi	r24, 0x03	; 3
+  8a:	eb df       	rcall	.-42     	; 0x62 <adc_select_channel>
+	// 0.1 volt is the the threshold
+	if(adc_read_single() < 20) {
+  8c:	e4 df       	rcall	.-56     	; 0x56 <adc_read_single>
+  8e:	44 97       	sbiw	r24, 0x14	; 20
+  90:	38 f4       	brcc	.+14     	; 0xa0 <__stack+0x1>
+		led_mode = dot_mode;
+  92:	85 e6       	ldi	r24, 0x65	; 101
+  94:	90 e0       	ldi	r25, 0x00	; 0
+  96:	90 93 6b 00 	sts	0x006B, r25	; 0x80006b <__data_end+0x1>
+  9a:	80 93 6a 00 	sts	0x006A, r24	; 0x80006a <__data_end>
+  9e:	08 95       	ret
+	}
+	else {
+		led_mode = bar_mode;
+  a0:	80 e6       	ldi	r24, 0x60	; 96
+  a2:	90 e0       	ldi	r25, 0x00	; 0
+  a4:	90 93 6b 00 	sts	0x006B, r25	; 0x80006b <__data_end+0x1>
+  a8:	80 93 6a 00 	sts	0x006A, r24	; 0x80006a <__data_end>
+  ac:	08 95       	ret
+
+000000ae <update_led_bar_graph>:
+/* Output LEDs are updated each time this function runs.				*
+ * At minimum level bottom LED is toggled on and Off.					*
+ * At higher levels LEDs are lit depending on selected mode.			*/
+void update_led_bar_graph(uint8_t level)
+{
+	if (level == 0) {
+  ae:	81 11       	cpse	r24, r1
+  b0:	09 c0       	rjmp	.+18     	; 0xc4 <update_led_bar_graph+0x16>
+		// Toggle bottom LED
+		PORTB ^= led_mode[level];
+  b2:	98 b3       	in	r25, 0x18	; 24
+  b4:	e0 91 6a 00 	lds	r30, 0x006A	; 0x80006a <__data_end>
+  b8:	f0 91 6b 00 	lds	r31, 0x006B	; 0x80006b <__data_end+0x1>
+  bc:	80 81       	ld	r24, Z
+  be:	89 27       	eor	r24, r25
+  c0:	88 bb       	out	0x18, r24	; 24
+  c2:	08 95       	ret
+	}
+	else {
+		// Clear bottom 4 bits and update
+		PORTB &= ~LED_MASK;
+  c4:	98 b3       	in	r25, 0x18	; 24
+  c6:	90 7f       	andi	r25, 0xF0	; 240
+  c8:	98 bb       	out	0x18, r25	; 24
+		PORTB |= led_mode[level];
+  ca:	98 b3       	in	r25, 0x18	; 24
+  cc:	e0 91 6a 00 	lds	r30, 0x006A	; 0x80006a <__data_end>
+  d0:	f0 91 6b 00 	lds	r31, 0x006B	; 0x80006b <__data_end+0x1>
+  d4:	e8 0f       	add	r30, r24
+  d6:	f1 1d       	adc	r31, r1
+  d8:	80 81       	ld	r24, Z
+  da:	89 2b       	or	r24, r25
+  dc:	88 bb       	out	0x18, r24	; 24
+  de:	08 95       	ret
+
+000000e0 <sleep>:
+	}
+}
+
+/* Put uC into sleep mode. */
+void sleep(void) {
+	set_sleep_mode(SLEEP_MODE_IDLE);
+  e0:	85 b7       	in	r24, 0x35	; 53
+  e2:	87 7e       	andi	r24, 0xE7	; 231
+  e4:	85 bf       	out	0x35, r24	; 53
+	sleep_enable();
+  e6:	85 b7       	in	r24, 0x35	; 53
+  e8:	80 62       	ori	r24, 0x20	; 32
+  ea:	85 bf       	out	0x35, r24	; 53
+	sei();
+  ec:	78 94       	sei
+	sleep_cpu();
+  ee:	88 95       	sleep
+	sleep_disable();
+  f0:	85 b7       	in	r24, 0x35	; 53
+  f2:	8f 7d       	andi	r24, 0xDF	; 223
+  f4:	85 bf       	out	0x35, r24	; 53
+	cli();
+  f6:	f8 94       	cli
+  f8:	08 95       	ret
+
+000000fa <main>:
+	WDTCR |= (1 << WDP1) | (1 << WDP0); // 0.125 sec timeout
+}
 
 int main(void)
 {
-	ADC_init();
-  38:	f4 df       	rcall	.-24     	; 0x22 <ADC_init>
-	DDRB = 0b00001111;	// SET PB0 - PB3 as output
-  3a:	8f e0       	ldi	r24, 0x0F	; 15
-  3c:	87 bb       	out	0x17, r24	; 23
+	wdt_init();
+  fa:	bb df       	rcall	.-138    	; 0x72 <wdt_init>
+	adc_init();
+  fc:	a5 df       	rcall	.-182    	; 0x48 <adc_init>
+	
+	/* LEDs in Dot or Bar mode */
+	select_led_mode();
+  fe:	c4 df       	rcall	.-120    	; 0x88 <select_led_mode>
+	
+	/* Sample battery voltage */
+	adc_select_channel(ADC_CH_BATT_V);
+ 100:	82 e0       	ldi	r24, 0x02	; 2
+ 102:	af df       	rcall	.-162    	; 0x62 <adc_select_channel>
 
+	/* Output LEDs connected to PB0 - PB3 */
+	DDRB |= LED_MASK;
+ 104:	87 b3       	in	r24, 0x17	; 23
+ 106:	8f 60       	ori	r24, 0x0F	; 15
+ 108:	87 bb       	out	0x17, r24	; 23
+	
+	uint16_t battery_voltage = 0;
+
+	/* Assume initial state */
+	uint8_t state = FULL;
+ 10a:	c4 e0       	ldi	r28, 0x04	; 4
+			case MED:
+				if (battery_voltage > THRESHOLD_HIGH) {
+					state = HIGH;
+				}
+				if (battery_voltage < THRESHOLD_MED) {
+					state = LOW;
+ 10c:	d1 e0       	ldi	r29, 0x01	; 1
+				}
+				break;
+
+			case MED:
+				if (battery_voltage > THRESHOLD_HIGH) {
+					state = HIGH;
+ 10e:	0f 2e       	mov	r0, r31
+ 110:	f3 e0       	ldi	r31, 0x03	; 3
+ 112:	df 2e       	mov	r13, r31
+ 114:	f0 2d       	mov	r31, r0
+			case HIGH:
+				if (battery_voltage > THRESHOLD_FULL) {
+					state = FULL;
+				}
+				if (battery_voltage < THRESHOLD_HIGH) {
+					state = MED;
+ 116:	68 94       	set
+ 118:	ee 24       	eor	r14, r14
+ 11a:	e1 f8       	bld	r14, 1
+				}
+				break;
+
+			case HIGH:
+				if (battery_voltage > THRESHOLD_FULL) {
+					state = FULL;
+ 11c:	68 94       	set
+ 11e:	cc 24       	eor	r12, r12
+ 120:	c2 f8       	bld	r12, 2
 		
-		battery_voltage = read_voltage();
-		
-		if(battery_voltage <= 250){
-			PORTB = 0b00000001;
-  3e:	01 e0       	ldi	r16, 0x01	; 1
-		}
-		
-		if(battery_voltage > 250 && battery_voltage <= 500){
-			PORTB = 0b0000011;
-  40:	13 e0       	ldi	r17, 0x03	; 3
-		}	
-		if(battery_voltage > 500 && battery_voltage <= 750){
-			PORTB = 0b0000111;
-  42:	d7 e0       	ldi	r29, 0x07	; 7
-		}
-		if(battery_voltage > 750){
-			PORTB = 0b0001111;
-  44:	cf e0       	ldi	r28, 0x0F	; 15
+		switch(state)
+		{
+			case EMPTY:
+				if (battery_voltage > THRESHOLD_LOW) {
+					state = LOW;
+ 122:	f1 2c       	mov	r15, r1
+	/* Assume initial state */
+	uint8_t state = FULL;
+	
     while (1) 
     {
+		battery_voltage = adc_read_single();
+ 124:	98 df       	rcall	.-208    	; 0x56 <adc_read_single>
+ 126:	8c 01       	movw	r16, r24
+		update_led_bar_graph(state);
+ 128:	8c 2f       	mov	r24, r28
+ 12a:	c1 df       	rcall	.-126    	; 0xae <update_led_bar_graph>
 		
+		switch(state)
+ 12c:	c2 30       	cpi	r28, 0x02	; 2
+ 12e:	d9 f0       	breq	.+54     	; 0x166 <main+0x6c>
+ 130:	28 f4       	brcc	.+10     	; 0x13c <main+0x42>
+ 132:	cc 23       	and	r28, r28
+ 134:	41 f0       	breq	.+16     	; 0x146 <main+0x4c>
+ 136:	c1 30       	cpi	r28, 0x01	; 1
+ 138:	61 f0       	breq	.+24     	; 0x152 <main+0x58>
+ 13a:	2d c0       	rjmp	.+90     	; 0x196 <main+0x9c>
+ 13c:	c3 30       	cpi	r28, 0x03	; 3
+ 13e:	e9 f0       	breq	.+58     	; 0x17a <main+0x80>
+ 140:	c4 30       	cpi	r28, 0x04	; 4
+ 142:	29 f1       	breq	.+74     	; 0x18e <main+0x94>
+ 144:	28 c0       	rjmp	.+80     	; 0x196 <main+0x9c>
+		{
+			case EMPTY:
+				if (battery_voltage > THRESHOLD_LOW) {
+					state = LOW;
+ 146:	cd 2f       	mov	r28, r29
+ 148:	05 3a       	cpi	r16, 0xA5	; 165
+ 14a:	12 40       	sbci	r17, 0x02	; 2
+ 14c:	20 f5       	brcc	.+72     	; 0x196 <main+0x9c>
+ 14e:	cf 2d       	mov	r28, r15
+ 150:	22 c0       	rjmp	.+68     	; 0x196 <main+0x9c>
+				}
+				break;
 
-		
-		battery_voltage = read_voltage();
-  46:	f2 df       	rcall	.-28     	; 0x2c <read_voltage>
-		
-		if(battery_voltage <= 250){
-  48:	8b 3f       	cpi	r24, 0xFB	; 251
-  4a:	91 05       	cpc	r25, r1
-  4c:	08 f4       	brcc	.+2      	; 0x50 <__SREG__+0x11>
-			PORTB = 0b00000001;
-  4e:	08 bb       	out	0x18, r16	; 24
+			case LOW:
+				if (battery_voltage > THRESHOLD_MED) {
+ 152:	04 3c       	cpi	r16, 0xC4	; 196
+ 154:	82 e0       	ldi	r24, 0x02	; 2
+ 156:	18 07       	cpc	r17, r24
+ 158:	08 f0       	brcs	.+2      	; 0x15c <main+0x62>
+					state = MED;
+ 15a:	ce 2d       	mov	r28, r14
+				}
+				if (battery_voltage < THRESHOLD_LOW) {
+ 15c:	04 3a       	cpi	r16, 0xA4	; 164
+ 15e:	12 40       	sbci	r17, 0x02	; 2
+ 160:	d0 f4       	brcc	.+52     	; 0x196 <main+0x9c>
+					state = EMPTY;
+ 162:	cf 2d       	mov	r28, r15
+ 164:	18 c0       	rjmp	.+48     	; 0x196 <main+0x9c>
+				}
+				break;
+
+			case MED:
+				if (battery_voltage > THRESHOLD_HIGH) {
+ 166:	03 3e       	cpi	r16, 0xE3	; 227
+ 168:	82 e0       	ldi	r24, 0x02	; 2
+ 16a:	18 07       	cpc	r17, r24
+ 16c:	08 f0       	brcs	.+2      	; 0x170 <main+0x76>
+					state = HIGH;
+ 16e:	cd 2d       	mov	r28, r13
+				}
+				if (battery_voltage < THRESHOLD_MED) {
+ 170:	03 3c       	cpi	r16, 0xC3	; 195
+ 172:	12 40       	sbci	r17, 0x02	; 2
+ 174:	80 f4       	brcc	.+32     	; 0x196 <main+0x9c>
+					state = LOW;
+ 176:	cd 2f       	mov	r28, r29
+ 178:	0e c0       	rjmp	.+28     	; 0x196 <main+0x9c>
+				}
+				break;
+
+			case HIGH:
+				if (battery_voltage > THRESHOLD_FULL) {
+ 17a:	02 30       	cpi	r16, 0x02	; 2
+ 17c:	83 e0       	ldi	r24, 0x03	; 3
+ 17e:	18 07       	cpc	r17, r24
+ 180:	08 f0       	brcs	.+2      	; 0x184 <main+0x8a>
+					state = FULL;
+ 182:	cc 2d       	mov	r28, r12
+				}
+				if (battery_voltage < THRESHOLD_HIGH) {
+ 184:	02 3e       	cpi	r16, 0xE2	; 226
+ 186:	12 40       	sbci	r17, 0x02	; 2
+ 188:	30 f4       	brcc	.+12     	; 0x196 <main+0x9c>
+					state = MED;
+ 18a:	ce 2d       	mov	r28, r14
+ 18c:	04 c0       	rjmp	.+8      	; 0x196 <main+0x9c>
+				}
+				break;
+
+			case FULL:
+				if (battery_voltage < THRESHOLD_FULL) {
+ 18e:	01 30       	cpi	r16, 0x01	; 1
+ 190:	13 40       	sbci	r17, 0x03	; 3
+ 192:	08 f4       	brcc	.+2      	; 0x196 <main+0x9c>
+					state = HIGH;
+ 194:	cd 2d       	mov	r28, r13
+
+			default:
+				break;
 		}
-		
-		if(battery_voltage > 250 && battery_voltage <= 500){
-  50:	9c 01       	movw	r18, r24
-  52:	2b 5f       	subi	r18, 0xFB	; 251
-  54:	31 09       	sbc	r19, r1
-  56:	2a 3f       	cpi	r18, 0xFA	; 250
-  58:	31 05       	cpc	r19, r1
-  5a:	08 f4       	brcc	.+2      	; 0x5e <__SREG__+0x1f>
-			PORTB = 0b0000011;
-  5c:	18 bb       	out	0x18, r17	; 24
-		}	
-		if(battery_voltage > 500 && battery_voltage <= 750){
-  5e:	9c 01       	movw	r18, r24
-  60:	25 5f       	subi	r18, 0xF5	; 245
-  62:	31 40       	sbci	r19, 0x01	; 1
-  64:	2a 3f       	cpi	r18, 0xFA	; 250
-  66:	31 05       	cpc	r19, r1
-  68:	08 f4       	brcc	.+2      	; 0x6c <__SREG__+0x2d>
-			PORTB = 0b0000111;
-  6a:	d8 bb       	out	0x18, r29	; 24
-		}
-		if(battery_voltage > 750){
-  6c:	8f 3e       	cpi	r24, 0xEF	; 239
-  6e:	92 40       	sbci	r25, 0x02	; 2
-  70:	08 f0       	brcs	.+2      	; 0x74 <__SREG__+0x35>
-			PORTB = 0b0001111;
-  72:	c8 bb       	out	0x18, r28	; 24
-	#else
-		//round up by default
-		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
-	#endif
 
-	__builtin_avr_delay_cycles(__ticks_dc);
-  74:	8f e2       	ldi	r24, 0x2F	; 47
-  76:	95 e7       	ldi	r25, 0x75	; 117
-  78:	01 97       	sbiw	r24, 0x01	; 1
-  7a:	f1 f7       	brne	.-4      	; 0x78 <__SREG__+0x39>
-  7c:	00 c0       	rjmp	.+0      	; 0x7e <__SREG__+0x3f>
-  7e:	00 00       	nop
-  80:	e2 cf       	rjmp	.-60     	; 0x46 <__SREG__+0x7>
+		sleep();    // power down uC
+ 196:	a4 df       	rcall	.-184    	; 0xe0 <sleep>
+    }
+ 198:	c5 cf       	rjmp	.-118    	; 0x124 <main+0x2a>
 
-00000082 <_exit>:
-  82:	f8 94       	cli
+0000019a <_exit>:
+ 19a:	f8 94       	cli
 
-00000084 <__stop_program>:
-  84:	ff cf       	rjmp	.-2      	; 0x84 <__stop_program>
+0000019c <__stop_program>:
+ 19c:	ff cf       	rjmp	.-2      	; 0x19c <__stop_program>
