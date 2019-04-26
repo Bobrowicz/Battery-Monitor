@@ -1,0 +1,12 @@
+Qty,partname,description,lib
+0,"LM2902","Low-Power, Quad-Operational Amplifiers, DIP-14/SOIC-14/SSOP-14","Amplifier_Operational"
+0,"Conn_01x10_Male","Generic connector, single row, 01x10, script generated (kicad-library-utils/schlib/autogen/connector/)","Connector"
+0,"TestPoint","test point","Connector"
+0,"Conn_02x03_Odd_Even","Generic connector, double row, 02x03, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)","Connector_Generic"
+0,"C_Small","Unpolarized capacitor, small symbol","Device"
+0,"LED","Light emitting diode","Device"
+0,"R","Resistor","Device"
+0,"SolderJumper_2_Bridged","Solder Jumper, 2-pole, closed/bridged","Jumper"
+0,"SolderJumper_2_Open","Solder Jumper, 2-pole, open","Jumper"
+0,"ATtiny13V-10SSU","10MHz, 1kB Flash, 64B SRAM, 64B EEPROM, debugWIRE, SOIC-8","MCU_Microchip_ATtiny"
+0,"LM285S-1.2","1.235V Micropower Voltage Reference Diodes, SO-8","Reference_Voltage"
